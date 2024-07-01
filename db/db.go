@@ -7,7 +7,7 @@ import (
 
 type Database struct {
 	Data map[string]interface{}
-	lock sync.Mutex
+	lock sync.RWMutex
 }
 
 type IDatabase interface {
@@ -31,8 +31,8 @@ func initCheck(d *Database) error {
 }
 
 func (d *Database) GetAllKeys() ([]string, error) {
-	d.lock.Lock()
-	defer d.lock.Unlock()
+	d.lock.RLock()
+	defer d.lock.RUnlock()
 
 	out := make([]string, 0)
 
@@ -48,8 +48,8 @@ func (d *Database) GetAllKeys() ([]string, error) {
 }
 
 func (d *Database) Get(key string) (interface{}, error) {
-	d.lock.Lock()
-	defer d.lock.Unlock()
+	d.lock.RLock()
+	defer d.lock.RUnlock()
 
 	if err := initCheck(d); err != nil {
 		return nil, err
